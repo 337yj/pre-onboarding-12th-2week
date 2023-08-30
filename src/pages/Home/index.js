@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getIssueList } from '../../api/issue';
 import { Banner, IssueItem } from '../../components/Common';
 import Loading from '../../components/Common/Loding';
+import useObserver from '../../hook/useObserver';
 
 const Home = () => {
 	const [issueList, setIssueList] = useState([]);
@@ -27,6 +28,14 @@ const Home = () => {
 		getIssues();
 	}, []);
 
+	const loadMore = async () => {
+		if (nextPage && !loading) {
+			await getIssues();
+		}
+	};
+
+	const targetRef = useObserver(loadMore, [nextPage, loading]);
+
 	return (
 		<main>
 			<ul>
@@ -40,6 +49,7 @@ const Home = () => {
 					);
 				})}
 				{loading && <Loading />}
+				<div ref={targetRef} style={{ height: '50px' }} />
 			</ul>
 		</main>
 	);
