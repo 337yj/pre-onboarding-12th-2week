@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getIssueList } from '../../api/issue';
 import { Banner, IssueItem } from '../../components/Common';
+import Loading from '../../components/Common/Loding';
 
 const Home = () => {
 	const [issueList, setIssueList] = useState([]);
@@ -38,6 +39,7 @@ const Home = () => {
 						</li>
 					);
 				})}
+				{loading && <Loading />}
 			</ul>
 		</main>
 	);
