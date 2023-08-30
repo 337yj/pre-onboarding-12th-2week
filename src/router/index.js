@@ -1,9 +1,10 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
-import { HomePage } from '../pages';
+import { HomePage, IssueDetailPage } from '../pages';
 
 const router = (
 	<Route>
 		<Route path="/" element={<HomePage />} />
+		<Route path="detail/:id" element={<IssueDetailPage />} />
 	</Route>
 );
 
