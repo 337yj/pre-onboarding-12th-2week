@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getIssueList } from '../../api/issue';
-import { IssueItem } from '../../components/Common';
+import { Banner, IssueItem } from '../../components/Common';
 
 const Home = () => {
 	const [issueList, setIssueList] = useState([]);
@@ -30,9 +30,11 @@ const Home = () => {
 		<main>
 			<ul>
 				{issueList.map((issue, idx) => {
+					const isBannerVisible = (idx + 1) % 4 === 0;
 					return (
 						<li key={`${issue.number}-${idx}`}>
 							<IssueItem issue={issue} />
+							{isBannerVisible && <Banner />}
 						</li>
 					);
 				})}
