@@ -1,3 +1,4 @@
+import { marked } from 'marked';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getIssue } from '../../api/issue';
@@ -23,13 +24,15 @@ const IssueDetail = () => {
 		return <Loading />;
 	}
 
+	const htmlBody = marked(issueDetail.body);
+
 	return (
 		<div>
 			<div>
 				<img src={issueDetail.user.avatar_url} alt="avartar image" />
 				<IssueItem issue={issueDetail} />
 			</div>
-			<p>{issueDetail.body}</p>
+			<p dangerouslySetInnerHTML={{ __html: htmlBody }} />
 		</div>
 	);
 };
