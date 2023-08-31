@@ -13,6 +13,11 @@ npm install
 npm start
 ```
 
+```
+# .env
+REACT_APP_BASE_URL=https://api.github.com/
+```
+
 <br/>
 
 ## 폴더 구조

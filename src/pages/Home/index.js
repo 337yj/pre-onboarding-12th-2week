@@ -24,7 +24,6 @@ const Home = () => {
 		setLoading(false);
 	};
 
-	console.log(issueList);
 	useEffect(() => {
 		getIssues();
 	}, []);
