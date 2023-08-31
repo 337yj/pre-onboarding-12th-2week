@@ -39,7 +39,7 @@ const Home = () => {
 
 	return (
 		<main>
-			<ul>
+			<Wrap>
 				{issueList.map((issue, idx) => {
 					const isBannerVisible = (idx + 1) % 4 === 0;
 					return (
@@ -52,13 +52,19 @@ const Home = () => {
 				{loading && <Loading />}
 
 				<div ref={targetRef} />
-			</ul>
+			</Wrap>
 		</main>
 	);
 };
 
+const Wrap = styled.ul`
+	border: 1px solid var(--color-placeholder);
+	border-radius: 20px;
+`;
+
 const List = styled.li`
-	margin-top: 24px;
+	padding: 24px;
+	border-bottom: 1px solid var(--color-placeholder);
 `;
 
 export default Home;

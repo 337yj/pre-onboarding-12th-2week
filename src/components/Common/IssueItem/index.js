@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const IssueItem = ({ issue }) => {
 	const { number, title, user, created_at, comments } = issue;
@@ -14,15 +15,29 @@ const IssueItem = ({ issue }) => {
 
 	return (
 		<article>
-			<div>
+			<Div>
 				<h2 onClick={goToDetail(`detail/${number}`)}>{`#${number} ${title}`}</h2>
-				<p>{`작성자: ${user.login} / 작성일: ${created_at.slice(0, 10)}`}</p>
-			</div>
-			<div>
-				<span>{comments}</span>
-			</div>
+				<Comment>{comments}</Comment>
+			</Div>
+
+			<p>{`작성자: ${user.login} / 작성일: ${created_at.slice(0, 10)}`}</p>
 		</article>
 	);
 };
+
+const Div = styled.div`
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 12px;
+`;
+
+const Comment = styled.div`
+	padding: 4px 10px;
+	border-radius: 20px;
+	background-color: var(--color-primary);
+	color: var(--color-white);
+	font-weight: bold;
+`;
 
 export default IssueItem;

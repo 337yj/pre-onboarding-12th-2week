@@ -7,6 +7,7 @@ const GlobalStyle = createGlobalStyle`
   max-width: 1024px;
   padding: 16px;
   margin: 0 auto;
+  font-family: 'Noto Sans KR', sans-serif;
 }
 
   @font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 100;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.otf) format('opentype');}
@@ -17,8 +18,8 @@ const GlobalStyle = createGlobalStyle`
   @font-face {font-family: 'Noto Sans KR';font-style: normal;font-weight: 900;src: url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff2) format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.woff) format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Black.otf) format('opentype');}
 
   :root{
-    --color-primary: #6610F2;
-    --color-placeholder: #999999;
+    --color-primary: #03c75a;
+    --color-placeholder: #d9dddc;
     --color-white: #FFFFFF;
     --color-black: #000000;
   }
