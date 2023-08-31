@@ -1,70 +1,207 @@
-# Getting Started with Create React App
+## 원티드 프리온보딩 프론트엔드 인턴십 2주차 과제
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+특정 깃헙 레파지토리([Issues react](https://github.com/facebook/react/issues))의 이슈 목록과 상세 내용을 확인하는 웹 사이트 구축
 
-## Available Scripts
+<br/>
 
-In the project directory, you can run:
+## 프로젝트 실행 방법
 
-### `npm start`
+```
+git clone https://github.com/337yj/pre-onboarding-12th-2week.git
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+npm install
+npm start
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+<br/>
 
-### `npm test`
+## 폴더 구조
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+  📂 src
+   ├─ api # 서버 요청 api
+   │  ├─ apiClient
+   │  └─ issue
+   │
+   ├─ components
+   │  ├─ Common # 공통 컴포넌트
+   │  │  ├─ Banner
+   │  │  ├─ IssueItem
+   │  │  └─ Loading
+   │  │
+   │  └─ Layout # Header, 레이아웃
+   │  
+   ├─ hook
+   │  └─ useObserver # 인피니트 스크롤
+   │  
+   ├─ pages
+   │  ├─ Home
+   │  ├─ IssueDetail
+   │  └─ NotFound
+   │  
+   ├─ router 
+   └─ index.js
+```
 
-### `npm run build`
+<br/>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 기능 구현
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### ✅ API 관리
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```js
+import axios from 'axios';
 
-### `npm run eject`
+const ACCESS_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+const apiClient = axios.create({
+	baseURL: BASE_URL,
+	timeout: 5000,
+});
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+apiClient.interceptors.request.use(async (config) => {
+	if (ACCESS_TOKEN) {
+		config.headers['Authorization'] = `Bearer ${ACCESS_TOKEN}`;
+		config.headers['X-GitHub-Api-Version'] = '2022-11-28';
+	}
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+	return config;
+});
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+export default apiClient;
+```
 
-## Learn More
+```js
+import apiClient from './apiClient';
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+export const ORGANIZATION = 'facebook';
+export const REPOSITORY = 'react';
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+export const getIssueList = async (params) => {
+	return await apiClient.get(`repos/${ORGANIZATION}/${REPOSITORY}/issues`, {
+		params,
+	});
+};
 
-### Code Splitting
+export const getIssue = async (id) => {
+	return await apiClient.get(`repos/${ORGANIZATION}/${REPOSITORY}/issues/${id}`);
+};
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- `axios의 intercepter`를 사용해 모든 요청에 일관된 헤더를 추가할 수 있어 코드 중복을 방지하고 효율적인 관리를 할 수 있도록 구현
+- issue 요청 관련 API를 파일로 분리
+- `ORGANIZATION`과 `REPOSITORY`를 변수로 만들어 레포지토리 변경 시 간단하게 변경, 헤더 타이틀로 재사용
 
-### Analyzing the Bundle Size
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### ✅ 데이터 요청 중 로딩 표시
 
-### Making a Progressive Web App
+```js
+import React from 'react';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+const Loading = () => {
+	return (
+		<div>
+			<AiOutlineLoading3Quarters />
+			<p>Loading</p>
+		</div>
+	);
+};
 
-### Advanced Configuration
+export default Loading;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```js
+// Home/index.js
+const [issueList, setIssueList] = useState([]);
+const [loading, setLoading] = useState(false);
+const [nextPage, setNextPage] = useState(true);
+const [page, setPage] = useState(1);
 
-### Deployment
+const getIssues = async () => {
+	setLoading(true);
+	const { data } = await getIssueList({ sort: 'comments', page, state: 'open' });
+	if (data.length === 0) {
+		setNextPage(false);
+	} else {
+		setIssueList((prev) => [...prev, ...data]);
+		setPage((prev) => prev + 1);
+	}
+	setLoading(false);
+};
+...
+return (
+		<main>
+			<ul>
+				...
+				{loading && <Loading />}
+			</ul>
+		</main>
+	);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- Home, IssueDetail 컴포넌트에서 데이터 로딩 중인지를 나타내는 `loading` 변수를 `useState`를 사용하여 관리
+- 데이터가 로딩 중인 동안에는 `setLoading(true)`를 호출하여 로딩 상태를 나타내고, 데이터 로딩이 완료되면 `setLoading(false)`를 호출하여 로딩 상태가 종료
 
-### `npm run build` fails to minify
+  <br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### ✅ 인피니트 스크롤
+
+```js
+import { useEffect, useRef } from 'react';
+
+const useObserver = (onIntersect, dependencyList) => {
+	const targetRef = useRef(null);
+
+	useEffect(() => {
+		if (targetRef && targetRef.current) {
+			const intersectionObserver = new IntersectionObserver((entries, observer) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						observer.unobserve(entry.target);
+						onIntersect();
+					}
+				});
+			});
+
+			intersectionObserver.observe(targetRef.current);
+			return () => intersectionObserver.disconnect();
+		}
+	}, [targetRef, ...dependencyList]);
+
+	return targetRef;
+};
+
+export default useObserver;
+```
+
+```js
+// Home/index.js
+...
+const loadMore = async () => {
+  if (nextPage && !loading) {
+    await getIssues();
+  }
+};
+
+const targetRef = useObserver(loadMore, [nextPage, loading]);
+
+return (
+  <main>
+    <ul>
+      ...
+      <div ref={targetRef} />
+    </ul>
+  </main>
+);
+```
+
+- 유지보수성, 가독성 높이기 위해 Custom Hook으로 구현
+- `IntersectionObserver` 사용
+- `useRef`로 `targetRef`를 생성하고 대상 컴포넌트의 `ref`에 연결
+- `targetRef`로 설정한 요소가 뷰포트에 드러날 때 `loadMore` 함수를 호출
+- `observer.unobserve`를 사용하여 콜백 호출 전에 관찰 해제
+
+<br/>
