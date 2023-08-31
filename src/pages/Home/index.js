@@ -3,6 +3,7 @@ import { getIssueList } from '../../api/issue';
 import { Banner, IssueItem } from '../../components/Common';
 import Loading from '../../components/Common/Loading';
 import useObserver from '../../hook/useObserver';
+import styled from 'styled-components';
 
 const Home = () => {
 	const [issueList, setIssueList] = useState([]);
@@ -42,17 +43,22 @@ const Home = () => {
 				{issueList.map((issue, idx) => {
 					const isBannerVisible = (idx + 1) % 4 === 0;
 					return (
-						<li key={`${issue.number}-${idx}`}>
+						<List key={`${issue.number}-${idx}`}>
 							<IssueItem issue={issue} />
 							{isBannerVisible && <Banner />}
-						</li>
+						</List>
 					);
 				})}
 				{loading && <Loading />}
-				<div ref={targetRef} style={{ height: '50px' }} />
+
+				<div ref={targetRef} />
 			</ul>
 		</main>
 	);
 };
+
+const List = styled.li`
+	margin-top: 24px;
+`;
 
 export default Home;
