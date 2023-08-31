@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getIssueList } from '../../api/issue';
 import { Banner, IssueItem } from '../../components/Common';
-import Loading from '../../components/Common/Loding';
+import Loading from '../../components/Common/Loading';
 import useObserver from '../../hook/useObserver';
 
 const Home = () => {
