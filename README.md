@@ -47,6 +47,26 @@ npm start
 
 ## 기능 구현
 
+### ✅ 라우터
+
+```js
+const router = (
+	<Route element={<Layout />}>
+		<Route path="/" element={<HomePage />} />
+		<Route path="detail/:id" element={<IssueDetailPage />} />
+		<Route path="/*" element={<NotFoundPage />} />
+	</Route>
+);
+
+const rootRouter = createBrowserRouter(createRoutesFromElements(router));
+
+export default rootRouter;
+```
+
+- 중첩라우트 사용
+
+<br/>
+
 ### ✅ API 관리
 
 ```js
