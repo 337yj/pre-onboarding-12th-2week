@@ -10,7 +10,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(async (config) => {
 	if (ACCESS_TOKEN) {
-		config.headers['Authorization'] = `Bearer ${ACCESS_TOKEN}`;
+		config.headers['Authorization'] = ACCESS_TOKEN;
 		config.headers['X-GitHub-Api-Version'] = '2022-11-28';
 	}
 
