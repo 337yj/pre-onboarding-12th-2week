@@ -34,9 +34,11 @@ const Div = styled.div`
 
 const Comment = styled.div`
 	padding: 4px 10px;
+	margin-left: 16px;
 	border-radius: 20px;
 	background-color: var(--color-primary);
 	color: var(--color-white);
+	font-size: 14px;
 	font-weight: bold;
 `;
 
